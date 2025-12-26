@@ -61,7 +61,14 @@ export default function CertificatePage() {
       // Convert to blob for sharing
       canvas.toBlob((blob) => {
         if (blob) {
-          const text = `Just earned my Arc Network certificate! 🎓 @arc is Circle's L1 blockchain - the Economic OS for the internet. Mastered USDC gas, sub-second finality, EVM smart contracts & enterprise DeFi! 🚀 https://arcacademy.vercel.app/`
+          const text = `GET /arc-academy/certificate
+{
+  "status": 200,
+  "verified": true,
+  "skills": ["USDC_gas", "sub_second_finality", "EVM", "enterprise_DeFi"],
+  "next": "build_future()"
+}
+@arc 🚀 https://arcacademy.vercel.app/`
           
           const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`
           window.open(twitterUrl, '_blank')
