@@ -1,15 +1,19 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Download, Share, CheckCircle, Twitter } from 'lucide-react'
 import html2canvas from 'html2canvas'
 import ArcLogo from '@/components/ArcLogo'
+import Link from 'next/link'
 
 export default function CertificatePage() {
   const [userName, setUserName] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [certificateGenerated, setCertificateGenerated] = useState(false)
+  const [quizCompleted, setQuizCompleted] = useState(false)
+  const [quizScore, setQuizScore] = useState(0)
+  const [quizPercentage, setQuizPercentage] = useState(0)
   const certificateRef = useRef<HTMLDivElement>(null)
 
   const currentDate = new Date().toLocaleDateString('en-US', {
@@ -18,8 +22,25 @@ export default function CertificatePage() {
     day: 'numeric'
   })
 
+  useEffect(() => {
+    // Check if quiz was completed by looking for quiz results in localStorage
+    const checkQuizCompletion = () => {
+      const quizResults = localStorage.getItem('arcQuizResults')
+      if (quizResults) {
+        const results = JSON.parse(quizResults)
+        if (results.passed && results.score !== undefined) {
+          setQuizCompleted(true)
+          setQuizScore(results.score)
+          setQuizPercentage(results.percentage)
+        }
+      }
+    }
+
+    checkQuizCompletion()
+  }, [])
+
   const handleGenerateCertificate = () => {
-    if (userName.trim()) {
+    if (userName.trim() && quizCompleted) {
       setCertificateGenerated(true)
     }
   }
@@ -30,10 +51,10 @@ export default function CertificatePage() {
     setIsGenerating(true)
     try {
       const canvas = await html2canvas(certificateRef.current, {
-        scale: 2,
+        scale: 1.5,
         backgroundColor: null,
-        width: 1200,
-        height: 800
+        width: 800,
+        height: 600
       })
       
       const link = document.createElement('a')
@@ -52,10 +73,10 @@ export default function CertificatePage() {
 
     try {
       const canvas = await html2canvas(certificateRef.current, {
-        scale: 2,
+        scale: 1.5,
         backgroundColor: null,
-        width: 1200,
-        height: 800
+        width: 800,
+        height: 600
       })
       
       // Convert to blob for sharing
@@ -79,6 +100,45 @@ export default function CertificatePage() {
     }
   }
 
+  // If quiz not completed, show requirement message
+  if (!quizCompleted) {
+    return (
+      <div className="min-h-screen px-6 py-12 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="glass-card p-8 max-w-md w-full text-center"
+        >
+          <div className="flex items-center justify-center mb-6">
+            <ArcLogo className="text-slate-300 mr-3" width={70} height={23} />
+            <div className="logo-separator h-4 w-px mx-3"></div>
+            <span className="text-slate-400 font-semibold">Academy</span>
+          </div>
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-yellow-500/20 flex items-center justify-center">
+            <CheckCircle className="w-8 h-8 text-yellow-400" />
+          </div>
+          <h1 className="text-3xl font-bold mb-4">Quiz Required</h1>
+          <p className="text-gray-300 mb-6">
+            You must complete the Arc Network quiz with a score of 70% or higher to earn your certificate.
+          </p>
+          
+          <div className="space-y-4">
+            <Link href="/quiz">
+              <button className="w-full glass-button bg-blue-500/20 border-blue-500/30 hover:bg-blue-500/30">
+                Take the Quiz
+              </button>
+            </Link>
+            <Link href="/tutorial">
+              <button className="w-full glass-button">
+                Review Tutorial First
+              </button>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
+
   if (!certificateGenerated) {
     return (
       <div className="min-h-screen px-6 py-12 flex items-center justify-center">
@@ -92,11 +152,18 @@ export default function CertificatePage() {
             <div className="logo-separator h-4 w-px mx-3"></div>
             <span className="text-slate-400 font-semibold">Academy</span>
           </div>
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-500/20 flex items-center justify-center">
+            <CheckCircle className="w-8 h-8 text-green-400" />
+          </div>
           <h1 className="text-3xl font-bold mb-4">Generate Your Certificate</h1>
-          <p className="text-gray-300 mb-6">
+          <p className="text-gray-300 mb-4">
             Congratulations on completing the Network Academy! 
-            Enter your name to generate your personalized certificate.
           </p>
+          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 mb-6">
+            <p className="text-green-400 text-sm">
+              ✅ Quiz completed with {quizScore}/8 questions correct ({quizPercentage}%)
+            </p>
+          </div>
           
           <div className="mb-6">
             <label className="block text-sm font-medium mb-2">Your Name</label>
@@ -152,7 +219,7 @@ export default function CertificatePage() {
             <div
               ref={certificateRef}
               className="relative mx-auto rounded-2xl shadow-2xl overflow-hidden bg-slate-900 border border-slate-700"
-              style={{ width: '1200px', height: '800px', maxWidth: '100%', minWidth: '320px' }}
+              style={{ width: '800px', height: '600px', maxWidth: '100%', minWidth: '320px' }}
             >
               {/* Solidity Contract Style Background */}
               <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800">
@@ -167,102 +234,84 @@ export default function CertificatePage() {
               </div>
 
               {/* Contract-style border */}
-              <div className="absolute inset-4 border border-green-400/30 rounded-xl">
-                <div className="absolute inset-2 border border-green-400/20 rounded-lg"></div>
+              <div className="absolute inset-6 border border-green-400/30 rounded-xl">
+                <div className="absolute inset-3 border border-green-400/20 rounded-lg"></div>
               </div>
 
               {/* Content styled as Solidity contract */}
-              <div className="relative z-10 p-8 h-full font-mono text-green-400 flex flex-col justify-between">
+              <div className="relative z-10 p-12 h-full font-mono text-green-400 flex flex-col justify-between overflow-hidden">
                 {/* Contract Header */}
-                <div className="mb-4">
+                <div className="mb-3">
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <div className="text-green-500 text-xs mb-1">// SPDX-License-Identifier: MIT</div>
-                      <div className="text-green-500 text-xs mb-2">pragma solidity ^0.8.19;</div>
+                      <div className="text-green-500 text-xs mb-1">pragma solidity ^0.8.19;</div>
                     </div>
-                    <div className="opacity-60 hover:opacity-80 transition-opacity">
-                      <ArcLogo className="text-green-300 certificate-logo" width={60} height={20} />
+                    <div className="opacity-60 hover:opacity-80 transition-opacity flex-shrink-0">
+                      <ArcLogo className="text-green-300 certificate-logo" width={50} height={17} />
                     </div>
                   </div>
-                  <div className="text-blue-400 text-xs mb-1">import "./ArcNetworkAcademy.sol";</div>
-                  <div className="text-blue-400 text-xs mb-4">import "./Circle.sol";</div>
                   
-                  <div className="text-yellow-400 text-lg font-bold mb-2">
-                    contract <span className="text-white">ArcNetworkCertificate</span> {'{'}
+                  <div className="text-yellow-400 text-base font-bold mb-2">
+                    contract <span className="text-white">ArcCertificate</span> {'{'}
                   </div>
                 </div>
 
                 {/* Contract State Variables */}
-                <div className="mb-4 ml-2 flex-1">
-                  <div className="text-purple-400 text-xs mb-2">// Certificate holder information</div>
-                  <div className="text-blue-400 text-sm mb-1">
-                    string public <span className="text-white">holderName</span> = "<span className="text-green-300">{userName}</span>";
+                <div className="mb-3 ml-2 flex-1 overflow-hidden">
+                  <div className="text-blue-400 text-xs mb-1 break-words">
+                    string public <span className="text-white">holder</span> = "<span className="text-green-300 font-bold text-sm">{userName}</span>";
                   </div>
-                  <div className="text-blue-400 text-sm mb-1">
+                  <div className="text-blue-400 text-xs mb-1">
                     string public <span className="text-white">course</span> = "<span className="text-green-300">Arc Network Fundamentals</span>";
                   </div>
-                  <div className="text-blue-400 text-sm mb-1">
-                    uint256 public <span className="text-white">issueDate</span> = <span className="text-yellow-300">{Math.floor(Date.now() / 1000)}</span>;
-                  </div>
-                  <div className="text-blue-400 text-sm mb-1">
-                    address public <span className="text-white">academy</span> = <span className="text-green-300">0xArcNetworkAcademy</span>;
-                  </div>
-                  <div className="text-blue-400 text-sm mb-3">
+                  <div className="text-blue-400 text-xs mb-4">
                     bool public <span className="text-white">verified</span> = <span className="text-yellow-300">true</span>;
                   </div>
 
                   {/* Skills Array */}
-                  <div className="mb-3">
-                    <div className="text-purple-400 text-xs mb-1">// Skills mastered</div>
-                    <div className="text-blue-400 text-sm mb-1">
-                      string[] public <span className="text-white">skillsAcquired</span> = [
+                  <div className="mb-4">
+                    <div className="text-purple-400 text-xs mb-2 font-bold">// Skills mastered</div>
+                    <div className="text-blue-400 text-xs mb-1">
+                      string[] public <span className="text-white">skills</span> = [
                     </div>
-                    <div className="ml-4 text-green-300 text-xs">
-                      <div>"<span className="text-green-300">Stablecoin Architecture</span>",</div>
-                      <div>"<span className="text-green-300">USDC Gas Mechanics</span>",</div>
-                      <div>"<span className="text-green-300">Malachite Consensus</span>",</div>
-                      <div>"<span className="text-green-300">Enterprise DeFi</span>"</div>
+                    <div className="ml-3 text-green-300 text-xs">
+                      <div>"<span className="text-green-300">USDC Gas</span>", "<span className="text-green-300">Sub-second Finality</span>",</div>
+                      <div>"<span className="text-green-300">EVM Contracts</span>", "<span className="text-green-300">Enterprise DeFi</span>"</div>
                     </div>
-                    <div className="text-blue-400 text-sm mb-3">];</div>
+                    <div className="text-blue-400 text-xs mb-4">];</div>
                   </div>
 
-                  {/* Achievement Struct */}
-                  <div className="mb-3">
-                    <div className="text-purple-400 text-xs mb-1">// Achievement details</div>
-                    <div className="text-yellow-400 text-sm mb-1">struct <span className="text-white">Achievement</span> {'{'}</div>
-                    <div className="ml-4 text-blue-400 text-xs">
-                      <div>uint256 <span className="text-white">completionScore</span>: <span className="text-yellow-300">100</span>;</div>
-                      <div>uint256 <span className="text-white">totalModules</span>: <span className="text-yellow-300">3</span>;</div>
-                      <div>uint256 <span className="text-white">quizScore</span>: <span className="text-yellow-300">85</span>;</div>
-                      <div>string <span className="text-white">level</span>: "<span className="text-green-300">Expert</span>";</div>
+                  {/* Quiz Performance */}
+                  <div className="mb-4">
+                    <div className="text-purple-400 text-xs mb-2 font-bold">// Performance</div>
+                    <div className="text-blue-400 text-xs mb-2">
+                      uint256 public <span className="text-white">score</span> = <span className="text-yellow-300 font-bold text-sm">{quizScore}</span>/<span className="text-yellow-300">8</span> (<span className="text-yellow-300 font-bold text-sm">{quizPercentage}%</span>);
                     </div>
-                    <div className="text-yellow-400 text-sm mb-2">{'}'}</div>
+                    <div className="text-blue-400 text-xs mb-3">
+                      string public <span className="text-white">level</span> = "<span className="text-green-300 font-bold text-sm">{quizPercentage >= 90 ? 'Expert' : quizPercentage >= 80 ? 'Advanced' : 'Proficient'}</span>";
+                    </div>
                   </div>
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-between items-end text-xs">
+                <div className="flex justify-between items-end text-xs flex-shrink-0">
                   <div className="text-left">
-                    <div className="text-purple-400 mb-1">// Issued by</div>
-                    <div className="text-green-300">Arc Network Academy</div>
-                    <div className="text-slate-400">{currentDate}</div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className="text-purple-400 mb-1">// Certificate ID</div>
-                    <div className="text-yellow-300">0x{Date.now().toString(16).slice(-8)}</div>
+                    <div className="text-purple-400 mb-1 font-bold">// Issued by</div>
+                    <div className="text-green-300 font-bold">Arc Network Academy</div>
+                    <div className="text-slate-400 text-xs">{currentDate}</div>
                   </div>
 
                   <div className="text-right">
                     <div className="text-purple-400 mb-1">// Status</div>
                     <div className="text-green-300 flex items-center">
                       <CheckCircle className="w-3 h-3 mr-1" />
-                      VERIFIED
+                      <span className="font-bold">VERIFIED</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="text-yellow-400 text-lg font-bold text-right mt-2">{'}'}</div>
+                <div className="text-yellow-400 text-base font-bold text-right mt-2">{'}'}</div>
               </div>
             </div>
           </div>

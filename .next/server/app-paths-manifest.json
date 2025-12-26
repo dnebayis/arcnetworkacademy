@@ -1,7 +1,5 @@
 {
-  "/modules/[id]/page": "app/modules/[id]/page.js",
   "/certificate/page": "app/certificate/page.js",
-  "/quiz/page": "app/quiz/page.js",
   "/page": "app/page.js",
-  "/tutorial/page": "app/tutorial/page.js"
+  "/quiz/page": "app/quiz/page.js"
 }

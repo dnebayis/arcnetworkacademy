@@ -191,6 +191,20 @@ export default function QuizPage() {
   }
 
   const handleSubmitQuiz = () => {
+    const finalScore = calculateScore()
+    const finalPercentage = Math.round((finalScore / questions.length) * 100)
+    const passed = finalPercentage >= 70
+    
+    // Save quiz results to localStorage
+    const quizResults = {
+      score: finalScore,
+      totalQuestions: questions.length,
+      percentage: finalPercentage,
+      passed: passed,
+      completedAt: new Date().toISOString()
+    }
+    
+    localStorage.setItem('arcQuizResults', JSON.stringify(quizResults))
     setShowResults(true)
   }
 
