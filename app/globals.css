@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-source-sans), system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900;
+    @apply text-white min-h-screen;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    font-family: var(--font-source-sans), system-ui, sans-serif;
+  }
+  
+  /* Ensure main content has proper spacing for desktop navigation */
+  @media (min-width: 768px) {
+    .main-content {
+      margin-left: 80px;
+    }
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-md bg-slate-800/40 border border-slate-700/50 rounded-2xl shadow-xl;
+  }
+  
+  .glass-button {
+    @apply backdrop-blur-md bg-slate-800/40 border border-slate-700/50 rounded-xl px-6 py-3 hover:bg-slate-700/50 transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+  
+  .liquid-glass {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.3), rgba(30, 41, 59, 0.2));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.4);
+  }
+  
+  .nav-glass {
+    @apply backdrop-blur-xl bg-slate-800/20 border border-slate-600/30 shadow-2xl;
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.15), rgba(30, 41, 59, 0.1));
+    box-shadow: 
+      0 8px 32px 0 rgba(15, 23, 42, 0.3),
+      inset 0 1px 0 0 rgba(148, 163, 184, 0.1);
+  }
+  
+  /* Material Icons optimization */
+  .material-icons {
+    font-feature-settings: 'liga';
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+  }
+  
+  .material-icons-outlined {
+    font-feature-settings: 'liga';
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+  }
+  
+  .material-icons-round {
+    font-feature-settings: 'liga';
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+  }
+  
+  /* Arc Logo optimization */
+  .arc-logo {
+    transition: all 0.3s ease;
+  }
+  
+  .arc-logo:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Logo text separator */
+  .logo-separator {
+    background: linear-gradient(to bottom, transparent, rgba(148, 163, 184, 0.5), transparent);
+  }
+  
+  /* Module card alignment */
+  .module-card {
+    min-height: 400px;
+  }
+  
+  /* Knowledge-focused typography */
+  .knowledge-text {
+    font-family: var(--font-source-sans), system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+  }
+  
+  .knowledge-heading {
+    font-family: var(--font-source-sans), system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  
+  /* Enhanced Material Icons for knowledge context */
+  .knowledge-icon {
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  }
+  
+  .knowledge-icon-filled {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  
+  /* Certificate logo enhancement */
+  .certificate-logo {
+    filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.3));
+  }
+  
+  /* Navigation performance optimizations */
+  .nav-item {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  
+  .nav-item:hover {
+    transform: translateZ(0) scale(1.05);
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-slate-300 via-slate-200 to-slate-300 bg-clip-text text-transparent;
+  }
+  
+  .floating-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(71, 85, 105, 0.2) 0%, rgba(51, 65, 85, 0.1) 100%);
+    filter: blur(1px);
+    animation: float 8s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-20px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(10px) rotate(240deg);
+  }
+}
+
+.certificate-template {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.certificate-template::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+}
